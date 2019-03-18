@@ -6,6 +6,7 @@
   "dependencies": {
     "bufferutil": "^4.0.1",
     "electron-is-dev": "^1.0.1",
+    "electron-rebuild": "^1.8.4",
     "keypress": "^0.2.1",
     "license": "MIT",
     "noble": "^1.9.1",
@@ -27,6 +28,7 @@
     "build": "react-scripts build",
     "start": "concurrently \"yarn web\" \"wait-on http://localhost:3000 && electron .\"",
     "test": "react-scripts test",
+    "install": "electron-rebuild",
     "eject": "react-scripts eject",
     "electron-dev": "concurrently \"BROWSER=none yarn start\" \"wait-on http://localhost:3000 && electron .\"",
     "preelectron-pack": "yarn build",

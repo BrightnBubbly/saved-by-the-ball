@@ -13,17 +13,22 @@ class App extends Component {
   constructor(props) {
     super(props);
 
+    this.init = this.init.bind(this);
+    // this.whatsUp = this.whatsUp.bind(this);
+    // this.getDown = this.getDown.bind(this);
+    // this.getOverIt = this.getOverIt.bind(this);
+    // this.rightOn = this.rightOn.bind(this);
+    this.letsRoll = this.letsRoll.bind(this);
+
     this.state = {
-      upButton: false,
-      downButton: false,
-      leftButton: false,
-      rightButton: false,
+      stats: [],
+      angle: ''
     };
   }
 
   async init() {
     try {
-      process.stdin.resume();
+      // process.stdin.resume();
       await orb.connect(this.listen);
 
       // print system/battery state
@@ -42,7 +47,7 @@ class App extends Component {
         charges: state.chargeCount + ' lifetime charges', // number of total charges to date
         lastCharged: (state.secondsSinceCharge / 60) + ' min ago'// minues since last charge
       };
-      return stats;
+      this.setState(stats);
     } catch (error) {
       console.log("BATTERY ERROR:", error);
     }
@@ -134,8 +139,11 @@ class App extends Component {
     }
   }
 
-  letsRoll = async (angle) => {
+  letsRoll = async (e) => {
 
+    e.preventDefault();
+
+    const angle = document.getElementById("angle").value
     console.log(typeof angle);
     console.log(angle);
 
@@ -150,9 +158,11 @@ class App extends Component {
     }
   }
 
-  render() {
-    this.init();
+  componentWillMount() {
+    this.init()
+  }
 
+  render() {
     return (
       <div className="App">
         <header className="App-header">
@@ -161,38 +171,44 @@ class App extends Component {
           </h1>
         </header>
         <body>
-          <div class= "content">
+          <div className= "content">
             <h2>
               Stats
             </h2>
-            <p>
-            </p>
+            {this.state.stats ? this.state.stats.map((stat) => (
+              <ul>
+                <li>{stat.system}</li>
+                <li>{stat.voltage}</li>
+                <li>{stat.charges}</li>
+                <li>{stat.lastCharged}</li>
+              </ul>
+            )) : <p>Please connect the SPRK</p>}
           </div>
-          <div class= "content">
+          <div className= "content">
             <h2>
               Make SPRK Roll Forward!
             </h2>
             <button>Roll</button>
           </div>
-          <div class= "content">
+          <div className= "content">
             <h2>
               Make SPRK Roll Backward!
             </h2>
             <button>Roll</button>
           </div>
-          <div class= "content">
+          <div className= "content">
             <h2>
               Make SPRK Roll to the Left!
             </h2>
             <button>Roll</button>
           </div>
-          <div class= "content">
+          <div className= "content">
             <h2>
               Make SPRK Roll to the Right!
             </h2>
             <button>Roll</button>
           </div>
-          <div class= "content">
+          <div className= "content">
             <h2>
               Which Direction Do You Want SPRK to Roll?
             </h2>
@@ -202,8 +218,10 @@ class App extends Component {
               <li>An angle of 90 makes the SPRK roll right and 270 makes it roll left.</li>
               <li>Angles between any of these numbers will cause the SPRK to roll at an angle.</li>
             </ul>
-            <input id="angle" placeholder="Enter a value between 0 and 360"/>
-            <button>Roll</button>
+            <form onSubmit={this.letsRoll}>
+              <input id="angle" placeholder="Enter a value between 0 and 360"/>
+              <button type="submit">Roll</button>
+            </form>
           </div>
         </body>
         <footer>
