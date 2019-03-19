@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import './App.css';
 import sphero from "sphero";
 import keypress from "keypress";
+// import serialport from "serialport";
 
 // init
 const orb = sphero("/dev/tty.Sphero-ORG-AMP-SPP"); // change BLE address accordingly (get address by running ls -a /dev | grep tty.Sphero)
@@ -21,7 +22,7 @@ class App extends Component {
     this.letsRoll = this.letsRoll.bind(this);
 
     this.state = {
-      stats: [],
+      batteryStats: [],
       angle: ''
     };
   }
@@ -35,6 +36,7 @@ class App extends Component {
       console.log(await this.battery());
     } catch (error) {
       console.log("::CONNECTION ERROR", error);
+      console.log(this.state.batteryStats)
     }
   }
 
@@ -47,7 +49,7 @@ class App extends Component {
         charges: state.chargeCount + ' lifetime charges', // number of total charges to date
         lastCharged: (state.secondsSinceCharge / 60) + ' min ago'// minues since last charge
       };
-      this.setState(stats);
+      this.setState({ batteryStats: stats });
     } catch (error) {
       console.log("BATTERY ERROR:", error);
     }
@@ -148,7 +150,6 @@ class App extends Component {
     console.log(angle);
 
     try {
-      const roll = orb.roll.bind(orb, 100);
       roll(angle)
     } catch (error) {
       alert("Please enter a number between 0 and 360: ", error);
@@ -175,14 +176,14 @@ class App extends Component {
             <h2>
               Stats
             </h2>
-            {this.state.stats ? this.state.stats.map((stat) => (
+            {this.state.batteryStats.length > 0 ? this.state.batteryStats.map((stat) => (
               <ul>
                 <li>{stat.system}</li>
                 <li>{stat.voltage}</li>
                 <li>{stat.charges}</li>
                 <li>{stat.lastCharged}</li>
               </ul>
-            )) : <p>Please connect the SPRK</p>}
+            )) : <p>Please connect the SPRK to see battery stats</p>}
           </div>
           <div className= "content">
             <h2>
